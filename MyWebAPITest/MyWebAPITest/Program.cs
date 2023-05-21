@@ -11,6 +11,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<ProductService, ProductService>();
+
+//builder.Services.AddScoped<ICategoryResponsitory, CategoryResponsitoty>();
+builder.Services.AddScoped<ICategoryResponsitory, CategoryRespositoryMemory>();
 builder.Services.AddDbContext<MyTestDBContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("MSSQL"));

@@ -45,11 +45,7 @@ namespace MyWebAPITest.Controllers
                 var cteNew = new Category { CategoryID=Guid.NewGuid(), CategoryName=ctNew.CategoryName};
                 context.categories.Add(cteNew);
                 context.SaveChanges();
-                return Ok(new
-                {
-                    Success = true,
-                    data = cteNew
-                });
+                return StatusCode(StatusCodes.Status201Created,cteNew);
 
             }
             catch (Exception)
