@@ -47,6 +47,7 @@ namespace MyWebAPITest.Controllers
                 };
                 _context.books.Add(book);
                 _context.SaveChanges();
+
                 return Ok(new
                 {
                     Succes = true,
@@ -65,18 +66,20 @@ namespace MyWebAPITest.Controllers
             };
         }
         [HttpPut("{id}")]
-        public IActionResult UpdateBook(string id,BookModel bookEdit)
+        public IActionResult UpdateBook(string id, BookUpdate bookEdit)
         {
             try
             {
                 var book = _context.books.SingleOrDefault(b => b.Id == Guid.Parse(id));
                 if (book == null) { return NotFound(); }
-                book.Title = bookEdit.Title;
-                book.Description = bookEdit.Description;
-                book.Discount = bookEdit.Discount;
-                book.Prices = bookEdit.Prices;
-                book.Author = bookEdit.Author;
-                book.CateID = bookEdit.CateID;
+
+                book.Title = bookEdit?.Title ?? book.Title;
+                book.Name = bookEdit?.Name ?? book.Name;
+                book.Description = bookEdit?.Description ?? book.Description;
+                book.Discount = bookEdit?.Discount ?? book.Discount;
+                book.Prices = bookEdit?.Prices ?? book.Prices;
+                book.Author = bookEdit?.Author ?? book.Author;
+                book.CateID = bookEdit?.CateID ?? book.CateID;
                 
                 _context.SaveChanges();
                 return Ok(new
@@ -87,7 +90,6 @@ namespace MyWebAPITest.Controllers
             }
             catch (Exception e)
             {
-
                 return BadRequest(new
                 {
                     Success = false,
