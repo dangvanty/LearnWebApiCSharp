@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+using MyWebAPITest.Data;
 using MyWebAPITest.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,7 +11,10 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<ProductService, ProductService>();
-
+builder.Services.AddDbContext<MyTestDBContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("MSSQL"));
+});
 
 var app = builder.Build();
 
