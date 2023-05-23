@@ -11,7 +11,8 @@ namespace MyWebAPITest.Data
         public DbSet<Category> categories { get; set; }
         public DbSet<Order> orders { get; set; }
         public DbSet<OrderDetail> ordersDetail { get; set; }
-
+        public DbSet<User> users { get; set; }
+        public DbSet<RefreshTokens> refreshTokens { get; set; }
         #endregion
 
 
@@ -44,6 +45,18 @@ namespace MyWebAPITest.Data
                       .HasConstraintName("FK_OrderDetail_Book");
                       
                 });
+
+            // định nghĩa người dùng 
+            modelBuilder.Entity<User>(
+                e =>
+                {
+                    e.HasIndex(e => e.UserName).IsUnique();
+                    e.HasIndex(e => e.Email).IsUnique();
+                    e.Property(e => e.FullName).IsRequired().HasMaxLength(150);
+                    e.Property(e => e.Email).IsRequired().HasMaxLength(150);
+                }
+
+                );
         }
     }
 }

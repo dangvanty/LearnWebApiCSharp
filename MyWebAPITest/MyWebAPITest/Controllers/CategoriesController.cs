@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using MyWebAPITest.Models;
 using MyWebAPITest.Services;
 
@@ -14,6 +15,7 @@ namespace MyWebAPITest.Controllers
         _categoryRespository = categoryRespository;
 
         }
+
         [HttpGet]
         public IActionResult GetAll()
         {
@@ -48,6 +50,7 @@ namespace MyWebAPITest.Controllers
         
         }
         [HttpPost]
+        [Authorize]
         public IActionResult CreateCategory(CategoryModel categoryNew)
         {
             try
