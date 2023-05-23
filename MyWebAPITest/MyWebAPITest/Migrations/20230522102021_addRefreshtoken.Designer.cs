@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MyWebAPITest.Data;
 
@@ -11,9 +12,10 @@ using MyWebAPITest.Data;
 namespace MyWebAPITest.Migrations
 {
     [DbContext(typeof(MyTestDBContext))]
-    partial class MyTestDBContextModelSnapshot : ModelSnapshot
+    [Migration("20230522102021_addRefreshtoken")]
+    partial class addRefreshtoken
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

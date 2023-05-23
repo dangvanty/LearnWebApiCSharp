@@ -14,7 +14,7 @@ namespace MyWebAPITest.Controllers
             _bookResponsitory = bookResponsitory;
         }
         [HttpGet]
-        public IActionResult GetAllBySearch(string?search, double? from, double? to, string? sortBy, int page =1) 
+        public IActionResult GetAllBySearch(string?search, double? from, double? to, string? sortBy , int page=1)
         {
             try
             {

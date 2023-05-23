@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using MyWebAPITest.Models;
 using MyWebAPITest.Services;
 
@@ -48,6 +49,7 @@ namespace MyWebAPITest.Controllers
         
         }
         [HttpPost]
+        [Authorize]
         public IActionResult CreateCategory(CategoryModel categoryNew)
         {
             try
