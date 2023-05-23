@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using MyWebAPITest.Data;
+﻿using Microsoft.AspNetCore.Mvc;
+using MyWebAPITest.Helpers;
 using MyWebAPITest.Models;
+using MyWebAPITest.Services;
 
 namespace MyWebAPITest.Controllers
 {
@@ -9,44 +9,47 @@ namespace MyWebAPITest.Controllers
     [ApiController]
     public class BooksController : ControllerBase
     {
-        private MyTestDBContext _context;
+        private IBookResponsitory _bookResponsitory;
 
-        public BooksController(MyTestDBContext context) {
-            _context = context;
+        public BooksController(IBookResponsitory bookResponsitory)
+        {
+            _bookResponsitory = bookResponsitory;
 
         }
-
         [HttpGet]
-        public IActionResult GetAll() {
-            var bookList = _context.books.ToList();
-            return Ok(bookList);
+        public async Task<IActionResult> GetAllBySearch(string? search, double? from, double? to, string? sortBy, int page = 1)
+        {
+            try
+            {
+                var result = await _bookResponsitory.GetAllBook(search, from, to, sortBy, page);
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                return BadRequest();
+            }
         }
+        //[HttpGet]
+        //public IActionResult GetAll() {
+        //    var bookList = _context.books.ToList();
+        //    return Ok(bookList);
+        //}
         [HttpGet("{id}")]
-        public IActionResult GetById(string id) {
-            var book = _context.books.SingleOrDefault(b => b.Id == Guid.Parse(id));
-            if(book == null)
+        public async Task<IActionResult> GetById(string id)
+        {
+            var book = await _bookResponsitory.FindBookById(id);
+            if (book == null)
             {
                 return NotFound();
             }
             return Ok(book);
         }
         [HttpPost]
-        public IActionResult Create(BookModel newBook)
+        public async Task<IActionResult> Create(BookModel newBook)
         {
             try
             {
-                var book = new Book { 
-                    Id = Guid.NewGuid(),
-                    Author=newBook.Author,
-                    Name=newBook.Name,
-                    Description=newBook.Description,
-                    Discount=newBook.Discount,
-                    Prices=newBook.Prices,
-                    Title=newBook.Title,
-                    CateID=newBook.CateID                
-                };
-                _context.books.Add(book);
-                _context.SaveChanges();
+                var book = await _bookResponsitory.CreateBook(newBook);
 
                 return Ok(new
                 {
@@ -66,26 +69,23 @@ namespace MyWebAPITest.Controllers
             };
         }
         [HttpPut("{id}")]
-        public IActionResult UpdateBook(string id, BookUpdate bookEdit)
+        public async Task<IActionResult> UpdateBookByID(string id, BookUpdate bookEdit)
         {
             try
             {
-                var book = _context.books.SingleOrDefault(b => b.Id == Guid.Parse(id));
-                if (book == null) { return NotFound(); }
-
-                book.Title = bookEdit?.Title ?? book.Title;
-                book.Name = bookEdit?.Name ?? book.Name;
-                book.Description = bookEdit?.Description ?? book.Description;
-                book.Discount = bookEdit?.Discount ?? book.Discount;
-                book.Prices = bookEdit?.Prices ?? book.Prices;
-                book.Author = bookEdit?.Author ?? book.Author;
-                book.CateID = bookEdit?.CateID ?? book.CateID;
-                
-                _context.SaveChanges();
-                return Ok(new
+                if(id != bookEdit.Id.ToString())
+                {
+                    return BadRequest(new ApiResponse
+                    {
+                        Success = false,
+                        Message = $"Id sua khong trung khop",
+                    });
+                }
+                _bookResponsitory.UpdateBook(id, bookEdit);
+                return Ok(new ApiResponse
                 {
                     Success = true,
-                    data = book
+                    Message = $"Sua thanh cong tai id {id}"
                 });
             }
             catch (Exception e)
@@ -98,16 +98,16 @@ namespace MyWebAPITest.Controllers
             }
         }
         [HttpDelete("id")]
-        public IActionResult DeleteBook(string id)
+        public async Task<IActionResult> DeleteBook(string id)
         {
             try
             {
-                var book = _context.books.SingleOrDefault(b => b.Id == Guid.Parse(id));
-                if (book == null) { return NotFound(); };
-
-                _context.books.Remove(book);
-                _context.SaveChanges();
-                return Ok(new { Success = true });
+                await _bookResponsitory.DeleteBookById(id);
+                return Ok(new ApiResponse
+                {
+                    Success = true,
+                    Message = $"Xoa thanh cong tai id {id}"
+                });
             }
             catch (Exception e)
             {

@@ -15,6 +15,7 @@ namespace MyWebAPITest.Controllers
         _categoryRespository = categoryRespository;
 
         }
+
         [HttpGet]
         public IActionResult GetAll()
         {
